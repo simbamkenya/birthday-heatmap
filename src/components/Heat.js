@@ -55,18 +55,33 @@ function Heat() {
         .padding(0.02)
         
 
-    svg.append('g')
+   const yAxis = svg.append('g')
         .call(axisLeft(y).ticks(12))
         .style('font-size', "0.875em")
         
-    svg.append('g')
+   const xAxis = svg.append('g')
         .call(axisTop(x).ticks(30))
         .style('font-size', "0.875em")
+
+    xAxis.selectAll("path")
+        .style("stroke", "white");
+
+    xAxis.selectAll("text")
+        .style("fill", "white")
+    
+    yAxis.selectAll("path")
+    .style("stroke", "white");
+
+    xAxis.selectAll("text")
+    .style("fill", "white")
+
+    yAxis.selectAll("text")
+    .style("fill", "white")
 
     //color scale
     const colorScale = scaleLinear()
         .domain(extent(data, d => d.births))
-        .range(['#FFFDC9', '#931700'])
+        .range(['#DCF0FB', '#106A9E'])
     // console.log(x.domain())
     // console.log(y.domain())
     const tooltip = select("#tooltip")
@@ -75,6 +90,7 @@ function Heat() {
         .style("background-color", "#E5E7EB")
         .style("padding", "5px")
         .style('padding-bottom', '10px')
+        .style("position", 'absolute')
         
 
     function mouseenter(){
@@ -82,7 +98,8 @@ function Heat() {
         .style("opacity", 1)
       
         select(this)
-        .style("stroke", "black")
+        .style("stroke", "#C97B0D")
+        .style("stroke-width", 3)
         .style("opacity", 1)
     }
     function mouseleave(e){
@@ -94,12 +111,12 @@ function Heat() {
     }
 
     const handleMouseMove = (e,d) => {
-        console.log(d)
+        console.log(e.clientX)
         setDate(d)
 
     tooltip
-      .style("left", e.pageX + "px")
-      .style("top", e.pageY + "px")
+      .style("left", (e.clientX - 120 ) + "px")
+      .style("top", e.clientY + "px")
     }
 
     svg.selectAll()
@@ -121,7 +138,7 @@ function Heat() {
 
   return (
     <div className='relative'>
-        <div id='tooltip' className='tooltip aboslute w-24'>
+        <div id='tooltip' className='tooltip absolute'>
             <span className='inline-block text-lg'>Date: {date.date_of_month}-{date.month}-{date.year}</span>
             <span className='inline-block text-lg ml-2'>Births: {date.births} </span>
         </div>
