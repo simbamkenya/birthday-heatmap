@@ -3,9 +3,13 @@ svg{
   width: 100%;
   height: auto;
 }
-.tooltip{
- 
+
+#tooltip{
+  border-radius: 0.2em;
+  /* color: rgb(240, 235, 235); */
+  background-color: black;
 }
+
 
 @tailwind base;
 @tailwind components;

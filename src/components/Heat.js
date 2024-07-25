@@ -8,6 +8,16 @@ function Heat() {
     const contRef = useRef(null)
     const [data, setData] = useState([])
     const [date, setDate]  = useState({month:0, day_of_month:0, year:0})
+
+    function reverseArray(arr) {
+        return arr.slice().reverse();
+      } 
+
+    const months = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+      ];
+      
     useEffect(() => {
         csv('https://raw.githubusercontent.com/fivethirtyeight/data/master/births/US_births_2000-2014_SSA.csv',
             d=> {
@@ -15,7 +25,7 @@ function Heat() {
                     births: +d.births,
                     date_of_month: +d.date_of_month,
                     day_of_week: +d.day_of_week,
-                    month: +d.month,
+                    month: months[+d.month - 1],
                     year: +d.year
                 }
 
@@ -27,7 +37,6 @@ function Heat() {
     height = 640 - margin.top - margin.bottom;
 
     useEffect(() => {
-
     const xAccessor = d => d.date_of_month;
     const yAccessor = d => d.month
 
@@ -37,9 +46,9 @@ function Heat() {
        .append('g')
          .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    const months = [...new Set(data.map(d => d.month))]
+    const months = reverseArray([...new Set(data.map(d => d.month))])
     const days = [...new Set(data.map(d => d.date_of_month))]
-    console.log(days)
+    console.log(months)
 
     //xscale
     const x = scaleBand()
@@ -47,7 +56,6 @@ function Heat() {
         .range([0, width])
         .padding(0.02)
         
-
     //yscale
     const y = scaleBand()
         .domain(months)
@@ -64,13 +72,21 @@ function Heat() {
         .style('font-size', "0.875em")
 
     xAxis.selectAll("path")
-        .style("stroke", "white");
+        .style("stroke", "white")
+        .style("opacity", 0);
 
     xAxis.selectAll("text")
         .style("fill", "white")
     
+    xAxis.selectAll("line")
+        .style("opacity", 0)
+    
     yAxis.selectAll("path")
-    .style("stroke", "white");
+    .style("stroke", "white")
+    .style("opacity", 0);
+
+    yAxis.selectAll("line")
+    .style("opacity", 0)
 
     xAxis.selectAll("text")
     .style("fill", "white")
@@ -138,9 +154,9 @@ function Heat() {
 
   return (
     <div className='relative'>
-        <div id='tooltip' className='tooltip absolute'>
-            <span className='inline-block text-lg'>Date: {date.date_of_month}-{date.month}-{date.year}</span>
-            <span className='inline-block text-lg ml-2'>Births: {date.births} </span>
+        <div id='tooltip' className='absolute'>
+            <span className='inline-block text-sm'>Date: {date.date_of_month}-{date.month}-{date.year}</span> <br/>
+            <span className='inline-block text-sm'>Births: {date.births} </span>
         </div>
         <svg viewBox={`0 0 ${width + 100} ${height}`}  ref={contRef}></svg>
     </div>
